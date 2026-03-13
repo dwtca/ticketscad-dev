@@ -475,6 +475,23 @@ function remove_nls($instr) {                // 10/20/09
 	return str_replace($nls, " ", $instr);
 	}        // end function
 
+/**
+ * Validate that a file path is contained within an allowed directory.
+ * Returns the canonical path on success, or FALSE if the path escapes
+ * the allowed directory (directory traversal attempt).
+ */
+function safe_file_path($filename, $allowed_dir) {
+	$allowed_real = realpath($allowed_dir);
+	if ($allowed_real === false) {
+		return false;
+	}
+	$filepath = realpath($allowed_dir . DIRECTORY_SEPARATOR . basename($filename));
+	if ($filepath === false || strpos($filepath, $allowed_real . DIRECTORY_SEPARATOR) !== 0) {
+		return false;
+	}
+	return $filepath;
+	}
+
 function mysql_table_exists($name) {
 	return boolVal ( mysql_num_rows(mysql_query("SHOW TABLES LIKE '{$name}'") )  > 0 );
 	}

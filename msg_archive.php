@@ -213,9 +213,12 @@ if(empty($_POST)) {
 		$dir = "./message_archives/";
 		$print = "";
 		foreach($_POST['files'] as $val) {
-			$print .=  "Deleted " . $val . "<BR />";
-			$file = realpath($dir . $val) . "<BR />";
-			unlink($dir . $val);
+			$safe_name = basename($val);
+			$safe_path = realpath($dir . $safe_name);
+			if ($safe_path !== false && strpos($safe_path, realpath($dir)) === 0) {
+				$print .=  "Deleted " . htmlspecialchars($safe_name) . "<BR />";
+				unlink($safe_path);
+			}
 			}
 		$title = "Archive Deletion Complete";
 	}

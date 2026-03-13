@@ -25,7 +25,7 @@ $interval = intval(get_variable('auto_poll'));
 $refresh = ($interval>0)? "\t<META HTTP-EQUIV='REFRESH' CONTENT='" . intval($interval*60) . "'>": "";	//10/4/08
 
 if (array_key_exists('unit_id', $_GET)) {	// 8/19/10
-	$query = "SELECT  * FROM `$GLOBALS[mysql_prefix]responder` WHERE `id` = {$_GET['unit_id']} LIMIT 1;";	//	8/19/10
+	$query = "SELECT  * FROM `$GLOBALS[mysql_prefix]responder` WHERE `id` = " . intval($_GET['unit_id']) . " LIMIT 1;";	//	8/19/10
 	$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(), basename( __FILE__), __LINE__);
 	$row = stripslashes_deep(mysql_fetch_array($result)) ;
 	$source = $row['callsign'];

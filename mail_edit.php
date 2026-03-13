@@ -16,7 +16,7 @@ require_once($_SESSION['fip']);		//7/28/10
 require_once('./incs/messaging.inc.php');
 $tick_id = ((isset($_GET['ticket_id'])) && ($_GET['ticket_id'] != "")) ? $_GET['ticket_id'] : 0;
 if (empty($_POST)) {
-	$query = "SELECT `id`, `scope` FROM `$GLOBALS[mysql_prefix]ticket` WHERE `id` = {$_GET['ticket_id']} LIMIT 1";	
+	$query = "SELECT `id`, `scope` FROM `$GLOBALS[mysql_prefix]ticket` WHERE `id` = " . intval($_GET['ticket_id']) . " LIMIT 1";	
 	$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(), basename( __FILE__), __LINE__);
 	$row = mysql_fetch_array($result);
 	$title = substr(stripslashes($row['scope']), 0, 60);

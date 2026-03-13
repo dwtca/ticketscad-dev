@@ -436,7 +436,7 @@ if(file_exists("./incs/modules.inc.php")) {
 	$now = mysql_format_date(time() - (get_variable('delta_mins')*60));
 	$caption = "";
 	if ($_postfrm_remove == 'yes') {					//delete Responder - checkbox - 8/12/09
-		$query = "DELETE FROM $GLOBALS[mysql_prefix]responder WHERE `id`=" . $_POST['frm_id'];
+		$query = "DELETE FROM `" . $GLOBALS['mysql_prefix'] . "responder` WHERE `id`=" . intval($_POST['frm_id']);
 		$result = mysql_query($query) or do_error($query, 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
 		$caption = "<B>Unit <I>" . stripslashes_deep($_POST['frm_name']) . "</I> has been deleted from database.</B><BR /><BR />";
 		print $caption;
@@ -462,7 +462,7 @@ if(file_exists("./incs/modules.inc.php")) {
 				} else {
 				if ((isset($_POST['frm_facility_sel'])) && (intval($_POST['frm_facility_sel'])> 0 )) {							// obtain facility location - 6/20/12
 					$theFac = $_POST['frm_facility_sel'];
-					$query_fac = "SELECT `lat`, `lng`, `id` FROM `$GLOBALS[mysql_prefix]facilities` WHERE `id` = {$_POST['frm_facility_sel']} LIMIT 1";
+					$query_fac = "SELECT `lat`, `lng`, `id` FROM `" . $GLOBALS['mysql_prefix'] . "facilities` WHERE `id` = " . intval($_POST['frm_facility_sel']) . " LIMIT 1";
 					$result_fac = mysql_query($query_fac) or do_error($query, 'mysql_query() failed', mysql_error(),basename( __FILE__), __LINE__);
 					if (mysql_num_rows($result_fac) ==1) {
 						$row_fac = stripslashes_deep(mysql_fetch_assoc($result_fac));
@@ -640,7 +640,7 @@ if(file_exists("./incs/modules.inc.php")) {
 		$theFac = 0;
 		if ((isset($_POST['frm_facility_sel'])) && (intval($_POST['frm_facility_sel'])> 0 )) {							// obtain facility location - 6/20/12
 			$theFac = $_POST['frm_facility_sel'];
-			$query_fac = "SELECT `lat`, `lng`, `id` FROM `$GLOBALS[mysql_prefix]facilities` WHERE `id` = {$_POST['frm_facility_sel']} LIMIT 1";
+			$query_fac = "SELECT `lat`, `lng`, `id` FROM `" . $GLOBALS['mysql_prefix'] . "facilities` WHERE `id` = " . intval($_POST['frm_facility_sel']) . " LIMIT 1";
 			$result_fac = mysql_query($query_fac) or do_error($query, 'mysql_query() failed', mysql_error(),basename( __FILE__), __LINE__);
 			if (mysql_num_rows($result_fac) ==1) {
 				$row_fac = stripslashes_deep(mysql_fetch_assoc($result_fac));

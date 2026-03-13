@@ -451,9 +451,13 @@ $tick_id = (isset($_REQUEST['ticket_id'])) ? $_REQUEST['ticket_id'] : "";							
 				}
 			$frm_meridiem_asof = array_key_exists('frm_meridiem_asof', ($_POST))? $_POST[frm_meridiem_asof] : "" ;
 			$frm_asof = "$_POST[frm_year_asof]-$_POST[frm_month_asof]-$_POST[frm_day_asof] $_POST[frm_hour_asof]:$_POST[frm_minute_asof]:00$frm_meridiem_asof";
-			$result = mysql_query("UPDATE `$GLOBALS[mysql_prefix]action` SET `description`='$_POST[frm_description]', `responder` = '$responder', `updated` = '$frm_asof' WHERE `id`='$_GET[id]' LIMIT 1") or do_error('action.php::update action','mysql_query',mysql_error(),basename( __FILE__), __LINE__);
-			$result = mysql_query("UPDATE `$GLOBALS[mysql_prefix]ticket` SET `updated` =	'$frm_asof' WHERE id='$_GET[ticket_id]' LIMIT 1") 	or do_error('action.php::update action','mysql_query',mysql_error(), basename(__FILE__), __LINE__);
-			$result = mysql_query("SELECT ticket_id FROM `$GLOBALS[mysql_prefix]action` WHERE `id`='$_GET[id]' LIMIT 1") 			or do_error('action.php::update action','mysql_query',mysql_error(), basename(__FILE__), __LINE__);
+			$_action_id = intval($_GET['id']);
+			$_frm_desc = mysql_real_escape_string($_POST['frm_description']);
+			$_responder = mysql_real_escape_string($responder);
+			$result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "action` SET `description`=?, `responder` = ?, `updated` = ? WHERE `id`=? LIMIT 1", "sssi", $_POST['frm_description'], $responder, $frm_asof, $_action_id) or do_error('action.php::update action','mysql_query',mysql_error(),basename( __FILE__), __LINE__);
+			$_ticket_id = intval($_GET['ticket_id']);
+			$result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "ticket` SET `updated` = ? WHERE id=? LIMIT 1", "si", $frm_asof, $_ticket_id) or do_error('action.php::update action','mysql_query',mysql_error(), basename(__FILE__), __LINE__);
+			$result = mysql_prepared_query("SELECT ticket_id FROM `" . $GLOBALS['mysql_prefix'] . "action` WHERE `id`=? LIMIT 1", "i", $_action_id) or do_error('action.php::update action','mysql_query',mysql_error(), basename(__FILE__), __LINE__);
 			$row = stripslashes_deep(mysql_fetch_array($result));
 			$id = $_GET['ticket_id'];
 			print '<SPAN CLASS="header text" style="width: 100%; display: block; text-align: center;">Action record has been updated.</SPAN><BR /><BR /><BR />';

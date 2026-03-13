@@ -405,7 +405,7 @@ switch ( $func ) {
 			break;		// end case "c2"
 
 	case "u" :
-		$query = "SELECT `payload`, `archived` FROM`$GLOBALS[mysql_prefix]ics` WHERE `id` = {$_POST ['id']} LIMIT 1";
+		$query = "SELECT `payload`, `archived` FROM`$GLOBALS[mysql_prefix]ics` WHERE `id` = {intval($_POST['id'])} LIMIT 1";
 		$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 		if ( mysql_num_rows ( $result ) <> 1 ) { dump ( query ) ;}
 
@@ -471,7 +471,7 @@ switch ( $func ) {
 			 `_by` = 		{$_SESSION['user_id']},
 			 `_from` = 		'{$_SERVER['REMOTE_ADDR']}',
 			 `_as-of` = 	'{$now_ts}'
-			WHERE `id` = {$_POST['ics_id']} LIMIT 1 ";
+			WHERE `id` = {intval($_POST['ics_id'])} LIMIT 1 ";
 
 		$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 ?>
@@ -498,7 +498,7 @@ switch ( $func ) {
 				 `_from` = 		'{$_SERVER['REMOTE_ADDR']}',
 				 `_as-of` = 	'{$now_ts}',
 				 `_sent` = 		NULL
-				WHERE `id` = {$_POST['ics_id'] } LIMIT 1 ";
+				WHERE `id` = {intval($_POST['ics_id'])} LIMIT 1 ";
 
 			$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 			}			// end if ()
@@ -684,7 +684,7 @@ case "a" :						// archive
 		$query = "UPDATE `$GLOBALS[mysql_prefix]ics` SET
 			 `_by` = 		{$_SESSION['user_id']},
 			 `archived` = 	'{$now_ts}'
-			WHERE `id` = {$_POST['ics_id']} LIMIT 1 ";
+			WHERE `id` = {intval($_POST['ics_id'])} LIMIT 1 ";
 
 		$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 
@@ -701,7 +701,7 @@ case "e" :						// de-archive
 		$query = "UPDATE `$GLOBALS[mysql_prefix]ics` SET
 			 `_by` = 		{$_SESSION['user_id']},
 			 `archived` = 	NULL
-			WHERE `id` = {$_POST['ics_id']} LIMIT 1 ";
+			WHERE `id` = {intval($_POST['ics_id'])} LIMIT 1 ";
 
 		$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 
@@ -716,7 +716,7 @@ case "e" :						// de-archive
 
 case "d" :						// delete
 		$msg = get_name ( $_POST ['ics_id'] ) ;
-		$query = "DELETE FROM `$GLOBALS[mysql_prefix]ics` WHERE `id` = {$_POST['ics_id']} LIMIT 1 ";
+		$query = "DELETE FROM `$GLOBALS[mysql_prefix]ics` WHERE `id` = {intval($_POST['ics_id'])} LIMIT 1 ";
 		$result = mysql_query ( $query ) or do_error ( $query, 'mysql query failed', mysql_error () , basename ( __FILE__ ) , __LINE__ ) ;
 ?>
 <body onload = 'setTimeout ( function () { document.can_form.submit () }, 4000 ) ;' >		<!-- <?php echo __LINE__ ;?> -->

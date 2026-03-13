@@ -39,9 +39,9 @@ function rmdir_recurse($path) {
 	} 
 
 $filestore = substr(getcwd(), 0, -5) . "/_osm/tiles/";
-$zoom = $_GET['zoom'];
-$col = $_GET['col'];
-$tile = $_GET['tile'];
+$zoom = preg_replace('/[^0-9]/', '', $_GET['zoom']);
+$col = preg_replace('/[^0-9]/', '', $_GET['col']);
+$tile = preg_replace('/[^0-9a-zA-Z._\-]/', '', $_GET['tile']);
 $thecolDir =  $filestore . $zoom . "/" . $col;
 $thezoomDir =  $filestore . $zoom;
 $theFile = $zoom . "/" . $col . "/" . $tile;

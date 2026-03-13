@@ -107,9 +107,11 @@ $key_str = (strlen($api_key) == 39)?  "key={$api_key}&" : false;
 $get_go = (array_key_exists('go', ($_GET)))? $_GET['go']  : "" ;
 if((!empty($_POST)) && ($get_go == 'true')) {
 	$frm_sort_desc = array_key_exists('frm_sort_desc', ($_POST))? 1: 0 ;	// checkbox handling
-	extract($_POST);
-	$query = "UPDATE `$GLOBALS[mysql_prefix]user` SET `passwd`='" . $frm_hash . "' WHERE `id`=" . $_SESSION['user_id'];
-	$result = mysql_query($query) or do_error($query, 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
+	$frm_hash = $_POST['frm_hash'];
+	// Hash the MD5 hash with bcrypt for secure storage (password_hash supported)
+	$secure_hash = function_exists('password_hash') ? password_hash($frm_hash, PASSWORD_BCRYPT) : $frm_hash;
+	$_user_id = intval($_SESSION['user_id']);
+	$result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "user` SET `passwd`=? WHERE `id`=?", "si", $secure_hash, $_user_id) or do_error('', 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
 ?>
 	<BODY>
 		<CENTER>

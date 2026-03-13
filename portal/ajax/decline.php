@@ -28,8 +28,8 @@ function get_requester_details($the_id) {
 	return $the_ret;
 	}
 
-$query = "SELECT * FROM `$GLOBALS[mysql_prefix]requests` WHERE `id` = " . strip_tags($_GET['id']) . " LIMIT 1";
-$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
+$_req_id = intval($_GET['id']);
+$result = mysql_prepared_query("SELECT * FROM `" . $GLOBALS['mysql_prefix'] . "requests` WHERE `id` = ? LIMIT 1", "i", $_req_id) or do_error('', 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
 if(mysql_num_rows($result) == 0) {
 	exit();
 	} else {
@@ -48,8 +48,9 @@ $the_requester = strip_tags($theDetails[1]);
 
 $theFrom = trim(get_variable('email_reply_to'));
 
-$query = "UPDATE `$GLOBALS[mysql_prefix]requests` SET `status` = 'Declined', `_by` = " . $by . ", `declined_date` = '" .$now . "', `description` = '" . $description . "' WHERE `id` = " . strip_tags($_GET['id']);
-$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
+$_req_id = intval($_GET['id']);
+$_status = 'Declined';
+$result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "requests` SET `status` = ?, `_by` = ?, `declined_date` = ?, `description` = ? WHERE `id` = ?", "sissi", $_status, $by, $now, $description, $_req_id) or do_error('', 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
 
 if($result) {
 	$ret_arr[0] = 100;

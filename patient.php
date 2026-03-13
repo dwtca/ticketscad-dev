@@ -301,7 +301,8 @@ while ($row = stripslashes_deep(mysql_fetch_assoc($result))) {
 				do_log($GLOBALS['LOG_PATIENT_ADD'], $_GET['ticket_id'], 0, mysql_insert_id());		// 3/18/10
 //				($code, $ticket_id=0, $responder_id=0, $info="", $facility_id=0, $rec_facility_id=0, $mileage=0) 		// generic log table writer - 5/31/08, 10/6/09
 	
-				$result = mysql_query("UPDATE `$GLOBALS[mysql_prefix]ticket` SET `updated` = '$frm_asof' WHERE id='$_GET[ticket_id]'  LIMIT 1") or do_error($query,mysql_error(), basename( __FILE__), __LINE__);
+				$_ticket_id = intval($_GET['ticket_id']);
+				$result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "ticket` SET `updated` = ? WHERE id=? LIMIT 1", "si", $frm_asof, $_ticket_id) or do_error('','mysql_query',mysql_error(), basename( __FILE__), __LINE__);
 				}
 
 			$id = $_GET['ticket_id'];
@@ -369,7 +370,8 @@ while ($row = stripslashes_deep(mysql_fetch_assoc($result))) {
 		$query = "UPDATE `$GLOBALS[mysql_prefix]ticket` SET `updated` = '$frm_asof' WHERE id='$_GET[ticket_id]'";
 		$result = mysql_query($query) or do_error($query,'mysql_query',mysql_error(), basename( __FILE__), __LINE__);
 
-		$result = mysql_query("SELECT ticket_id FROM `$GLOBALS[mysql_prefix]patient` WHERE id='$_GET[id]'") or do_error('patient.php::update patient record','mysql_query',mysql_error(), basename( __FILE__), __LINE__);
+		$_patient_id = intval($_GET['id']);
+		$result = mysql_prepared_query("SELECT ticket_id FROM `" . $GLOBALS['mysql_prefix'] . "patient` WHERE id=? LIMIT 1", "i", $_patient_id) or do_error('patient.php::update patient record','mysql_query',mysql_error(), basename( __FILE__), __LINE__);
 		$row = stripslashes_deep(mysql_fetch_assoc($result));
 
 		if($_POST['assigns'] != "0") {

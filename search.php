@@ -190,7 +190,7 @@ $do_str = ( ( array_key_exists('search_type', $_POST) ) && ( $_POST['search_type
 
 		$id_stack= array();
 
-		$query = "SELECT `id` FROM `$GLOBALS[mysql_prefix]ticket` WHERE `status` <> {$GLOBALS['STATUS_RESERVED']} AND `status` LIKE " . quote_smart($_POST['frm_querytype']) . " AND " . $search_fields . " " . $restrict_ticket . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;		// 9/19/08
+		$query = "SELECT `id` FROM `$GLOBALS[mysql_prefix]ticket` WHERE `status` <> {$GLOBALS['STATUS_RESERVED']} AND `status` LIKE " . quote_smart($_POST['frm_querytype']) . " AND " . $search_fields . " " . $restrict_ticket . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;		// 9/19/08
 		$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 
 		$tick_hits = mysql_affected_rows();

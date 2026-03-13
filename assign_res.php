@@ -26,10 +26,10 @@ $query = "UPDATE `$GLOBALS[mysql_prefix]assigns` SET
 	`u2farr` = NULL,
 	`clear` = NULL,
 	`as_of` = $now
-	WHERE `id` = {$_POST['frm_id']} LIMIT 1;";
+	WHERE `id` = " . intval($_POST['frm_id']) . " LIMIT 1;";
 
 $result = mysql_query($query) or do_error($query, "", mysql_error(), basename( __FILE__), __LINE__);
-$query = "SELECT * FROM `$GLOBALS[mysql_prefix]assigns` WHERE `id` =  {$_POST['frm_id']} LIMIT 1";
+$query = "SELECT * FROM `$GLOBALS[mysql_prefix]assigns` WHERE `id` = " . intval($_POST['frm_id']) . " LIMIT 1";
 $result = mysql_query($query) or do_error($query, "", mysql_error(), basename( __FILE__), __LINE__);
 
 $row = mysql_fetch_assoc($result);

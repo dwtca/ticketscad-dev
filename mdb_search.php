@@ -126,7 +126,7 @@ function validate(theForm) {
 		`field21` AS `member_status`,
 		`_on` AS `updated` 
 		FROM `$GLOBALS[mysql_prefix]member` 
-		WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;		// 9/19/08
+		WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;		// 9/19/08
 		$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 		if (mysql_num_rows($result)) {
 			$member_found = $counter = 1;
@@ -174,7 +174,7 @@ function validate(theForm) {
 			FROM `$GLOBALS[mysql_prefix]allocations` `a`
 			LEFT JOIN `$GLOBALS[mysql_prefix]training_packages` `tp` ON ( `a`.`skill_id` = tp.id AND `a`.`skill_type`= '1' )
 			LEFT JOIN `$GLOBALS[mysql_prefix]member` `m` ON ( `a`.`member_id` = `m`.`id` )					
-			WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;
+			WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;
 			$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 			if (mysql_num_rows($result)) {
 				$member_found = $counter = 1;
@@ -220,7 +220,7 @@ function validate(theForm) {
 			FROM `$GLOBALS[mysql_prefix]allocations` `a`
 			LEFT JOIN `$GLOBALS[mysql_prefix]capability_types` `ca` ON ( `a`.`skill_id` = `ca`.`id` AND `a`.`skill_type`= '2' )	
 			LEFT JOIN `$GLOBALS[mysql_prefix]member` `m` ON ( `a`.`member_id` = `m`.`id` )				
-			WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;
+			WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;
 			$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 			if (mysql_num_rows($result)) {
 				$member_found = $counter = 1;
@@ -267,7 +267,7 @@ function validate(theForm) {
 			FROM `$GLOBALS[mysql_prefix]allocations` `a`
 			LEFT JOIN `$GLOBALS[mysql_prefix]equipment_types` `eq` ON ( `a`.`skill_id` = `eq`.`id` AND `a`.`skill_type`= '3' )	
 			LEFT JOIN `$GLOBALS[mysql_prefix]member` `m` ON ( `a`.`member_id` = `m`.`id` )				
-			WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;
+			WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;
 
 			$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 
@@ -315,7 +315,7 @@ function validate(theForm) {
 			FROM `$GLOBALS[mysql_prefix]allocations` `a`
 			LEFT JOIN `$GLOBALS[mysql_prefix]clothing_types` `cl` ON ( `a`.`skill_id` = `cl`.`id` AND `a`.`skill_type`= '3' )	
 			LEFT JOIN `$GLOBALS[mysql_prefix]member` `m` ON ( `a`.`member_id` = `m`.`id` )				
-			WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;
+			WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;
 
 			$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 			if (mysql_num_rows($result)) {
@@ -358,7 +358,7 @@ function validate(theForm) {
 			`m`.`field2` AS `field2`			
 			FROM `$GLOBALS[mysql_prefix]mdb_files` `f`
 			LEFT JOIN `$GLOBALS[mysql_prefix]member` `m` ON ( `f`.`member_id` = `m`.`id` )				
-			WHERE " . $search_fields . " ORDER BY `" . $_POST['frm_ordertype'] . "` " . $desc;
+			WHERE " . $search_fields . " ORDER BY `" . preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['frm_ordertype']) . "` " . $desc;
 
 			$result = mysql_query($query) or do_error($query,'', mysql_error(),basename( __FILE__), __LINE__);
 

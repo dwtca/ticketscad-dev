@@ -152,7 +152,18 @@ function do_mobile_login($requested_page, $outinfo = FALSE, $hh = FALSE) {			// 
 			$result = mysql_stmt_get_result($stmt);
 			$row = mysql_fetch_assoc($result);
 			mysql_stmt_close($stmt);
-			$authenticated = $row && (password_verify($login_passwd, $row['passwd']) || $row['passwd'] === md5(strtolower($login_passwd)) || $row['passwd'] === md5($login_passwd));			
+			$authenticated = $row && (password_verify($login_passwd, $row['passwd']) || password_verify(md5(strtolower($login_passwd)), $row['passwd']) || $row['passwd'] === md5(strtolower($login_passwd)) || $row['passwd'] === md5($login_passwd));
+			// Auto-rehash legacy MD5 passwords to bcrypt on successful login
+			if ($authenticated && ($row['passwd'] === md5(strtolower($login_passwd)) || $row['passwd'] === md5($login_passwd))) {
+				$new_hash = password_hash($login_passwd, PASSWORD_BCRYPT);
+				$rehash_stmt = mysql_prepare("UPDATE `" . $GLOBALS['mysql_prefix'] . "user` SET `passwd` = ? WHERE `id` = ? LIMIT 1");
+				if ($rehash_stmt) {
+					$rehash_uid = intval($row['id']);
+					mysql_stmt_bind_param($rehash_stmt, "si", $new_hash, $rehash_uid);
+					mysql_stmt_execute($rehash_stmt);
+					mysql_stmt_close($rehash_stmt);
+				}
+			}
 			if ($authenticated) {
 				$row = stripslashes_deep($row);
 

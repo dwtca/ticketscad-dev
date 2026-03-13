@@ -416,10 +416,12 @@ Disposition &raquo; <input type = 'radio' name='frm_add_to' value='1' /><br /><b
         $_SESSION['osw_ntrupt_ok'] = TRUE;		// on-scene watch interrupt allowed (monitored by get_latest_id)
 
 		$field_name = array('description', 'comments');
+		$_frm_add_to = intval($_POST['frm_add_to']);
+		if (!array_key_exists($_frm_add_to, $field_name)) { $_frm_add_to = 0; }
 		$the_date = date(get_variable('date_format', now()));
 		$now_ts = now_ts();
 		$the_text = "[{$_SESSION['user']}:{$the_date}]" . strip_tags(trim($_POST['frm_text'])) . "\n";		// identify 'by'
-		$query = "UPDATE `$GLOBALS[mysql_prefix]ticket` SET `{$field_name[$_POST['frm_add_to']]}`= CONCAT (`{$field_name[$_POST['frm_add_to']]}`, '{$the_text}'), `updated` = '{$now_ts}'  WHERE `id` = " . intval($_POST['ref']) ." LIMIT 1";
+		$query = "UPDATE `$GLOBALS[mysql_prefix]ticket` SET `{$field_name[$_frm_add_to]}`= CONCAT (`{$field_name[$_frm_add_to]}`, '{$the_text}'), `updated` = '{$now_ts}'  WHERE `id` = " . intval($_POST['ref']) ." LIMIT 1";
 		$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(), __FILE__, __LINE__);
 		$query = "SELECT `y`. `type` FROM `$GLOBALS[mysql_prefix]ticket` `t`
 					LEFT JOIN `$GLOBALS[mysql_prefix]in_types` `y` ON (`t`.`in_types_id` = `y`.`id`)

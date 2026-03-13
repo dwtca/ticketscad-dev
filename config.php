@@ -1303,9 +1303,19 @@ case 'profile' :                    //update profile
     $get_go = (array_key_exists('go', ($_GET))) ? $_GET['go'] : "";
     if ($get_go == 'true') {            //check passwords
         $frm_sort_desc = array_key_exists('frm_sort_desc', ($_POST)) ? 1 : 0;    // checkbox handling
-        extract($_POST);
-        $query = "UPDATE `$GLOBALS[mysql_prefix]user` SET `passwd`='$frm_hash',info='$frm_info',email='$frm_email',sortorder='$frm_sortorder',sort_desc='$frm_sort_desc',ticket_per_page='$frm_ticket_per_page' WHERE id='$_SESSION[user_id]'";
-        $result = mysql_query($query) or do_error($query, 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
+        $frm_hash = $_POST['frm_hash'];
+        $frm_info = $_POST['frm_info'];
+        $frm_email = $_POST['frm_email'];
+        $frm_sortorder = $_POST['frm_sortorder'];
+        $frm_ticket_per_page = isset($_POST['frm_ticket_per_page']) ? $_POST['frm_ticket_per_page'] : '';
+        // Hash the MD5 hash with bcrypt for secure storage
+        $secure_hash = ($frm_hash !== "") ? (function_exists('password_hash') ? password_hash($frm_hash, PASSWORD_BCRYPT) : $frm_hash) : "";
+        $_user_id = intval($_SESSION['user_id']);
+        if ($secure_hash !== "") {
+            $result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "user` SET `passwd`=?,`info`=?,`email`=?,`sortorder`=?,`sort_desc`=?,`ticket_per_page`=? WHERE `id`=?", "ssssssi", $secure_hash, $frm_info, $frm_email, $frm_sortorder, $frm_sort_desc, $frm_ticket_per_page, $_user_id) or do_error('', 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
+        } else {
+            $result = mysql_prepared_query("UPDATE `" . $GLOBALS['mysql_prefix'] . "user` SET `info`=?,`email`=?,`sortorder`=?,`sort_desc`=?,`ticket_per_page`=? WHERE `id`=?", "sssssi", $frm_info, $frm_email, $frm_sortorder, $frm_sort_desc, $frm_ticket_per_page, $_user_id) or do_error('', 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
+        }
         print '<B>Your profile has been updated.</B><BR /><BR />';
     } else {
         $query = "SELECT id FROM `$GLOBALS[mysql_prefix]user` WHERE id='" . $_SESSION['user_id'] . "'";
@@ -2765,7 +2775,9 @@ case 'user' :
                 print "<B>User <i>" . $_POST['frm_user'] . "</i> has been deleted from database.</B><BR /><BR />";
             }
         } else {                                                                            // 7/12/10
-            $pass = empty($_POST['frm_hash']) ? "" : "`passwd`='$_POST[frm_hash]',";        // note trailing comma
+            $raw_hash = empty($_POST['frm_hash']) ? "" : $_POST['frm_hash'];
+            $secure_pass = ($raw_hash !== "") ? (function_exists('password_hash') ? password_hash($raw_hash, PASSWORD_BCRYPT) : $raw_hash) : "";
+            $pass = ($secure_pass === "") ? "" : "`passwd`='" . mysql_real_escape_string($secure_pass) . "',";        // note trailing comma
             $dob = empty($_POST['frm_dob']) ? "NULL" : quote_smart(trim($_POST['frm_dob']));        // 6/25/10
             $fields = " `addr_city` = " . quote_smart(trim($_POST['frm_addr_city'])) . ",	
 								`addr_st` = " . quote_smart(trim($_POST['frm_addr_st'])) . ",	

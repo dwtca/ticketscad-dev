@@ -49,7 +49,7 @@ $from = $_SERVER['REMOTE_ADDR'];
 $now = mysql_format_date(time() - (intval(get_variable('delta_mins')*60))); // 6/20/10
 
 if (array_key_exists("id", $_POST) && (!(empty($_POST['id'])))) {
-	$query 	= "SELECT *, UNIX_TIMESTAMP(_on) AS `_on` FROM `{$tablename}` WHERE `id` = {$_POST['id']}";				// 1/27/09
+	$query 	= "SELECT *, UNIX_TIMESTAMP(_on) AS `_on` FROM `{$tablename}` WHERE `id` = " . intval($_POST['id']);				// 1/27/09
 	$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
 
 	if (mysql_num_rows ($result) > 0) {	

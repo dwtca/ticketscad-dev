@@ -279,9 +279,15 @@ function mysql_stmt_close($stmt){
 }
 
 function mysql_stmt_error($stmt){
-    
+
     return mysql2i::mysql_stmt_error($stmt);
-    
+
+}
+
+function mysql_prepared_query($query, $types = "", &...$params){
+
+    return mysql2i::mysql_prepared_query($query, $types, ...$params);
+
 }
 
 function mysql_real_escape_string($escapestr,$link=null){

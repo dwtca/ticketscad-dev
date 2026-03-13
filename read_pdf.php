@@ -1,5 +1,5 @@
 <?php
-$file = $_GET['file'];
+$file = basename($_GET['file']);
 	include ( './lib/PdfToText.phpclass' ) ;
 
 	function  output ( $message )

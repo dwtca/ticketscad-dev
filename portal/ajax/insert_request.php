@@ -52,89 +52,45 @@ if($_GET['frm_patient'] == "") {
 	$appEmail = ($_GET['frm_app_email'] != "") ? $_GET['frm_app_email'] : NULL;
 	$the_email = (($appEmail != NULL) && (is_email($appEmail))) ? $appEmail : $theDetails[0];
 	$where = $_SERVER['REMOTE_ADDR'];
-	$scope = $_GET['frm_scope'];
-	$comments = $_GET['frm_comments'];
-	$street = $_GET['frm_street'];
-	$city = $_GET['frm_city'];
-	$postcode = $_GET['frm_postcode'];
-	$state = $_GET['frm_state'];	
+	$scope = strip_tags(trim($_GET['frm_scope']));
+	$comments = strip_tags(trim($_GET['frm_comments']));
+	$street = strip_tags(trim($_GET['frm_street']));
+	$city = strip_tags(trim($_GET['frm_city']));
+	$postcode = strip_tags(trim($_GET['frm_postcode']));
+	$state = strip_tags(trim($_GET['frm_state']));	
 	$lat = ($_GET['frm_lat'] != "") ? $_GET['frm_lat'] : '0';
 	$lng = ($_GET['frm_lng'] != "") ? $_GET['frm_lng'] : '0';	
-	$description = $_GET['frm_description'];
+	$description = strip_tags(trim($_GET['frm_description']));
 	$request_date = $_GET['frm_request_date'];
 	$request_date = mysql_format_date(strtotime($request_date));
-	$userName = $_GET['frm_username'];
-	$comments = $_GET['frm_comments'];
-	$phone = $_GET['frm_phone'];
-	$toAddress = urldecode($_GET['frm_toaddress']);
-	$pickup = $_GET['frm_pickup'];
-	$arrival = $_GET['frm_arrival'];
-	$patient = $_GET['frm_patient'];
-	$origFac = ($_GET['frm_orig_fac'] != "") ? $_GET['frm_orig_fac'] : '0';
-	$recFac = ($_GET['frm_rec_fac'] != "") ? $_GET['frm_rec_fac'] : '0';	
-	$query = "INSERT INTO `$GLOBALS[mysql_prefix]requests` (
-				`org`,
-				`contact`, 
-				`email`,
-				`street`, 
-				`city`, 
-				`postcode`,
-				`state`, 
-				`the_name`, 
-				`phone`, 
-				`to_address`,
-				`pickup`,
-				`arrival`,
-				`orig_facility`,
-				`rec_facility`, 
-				`scope`, 
-				`description`, 
-				`comments`, 
-				`lat`,
-				`lng`,
-				`request_date`, 
-				`status`, 
-				`accepted_date`,
-				`declined_date`, 
-				`resourced_date`, 
-				`completed_date`, 
-				`closed`, 
-				`requester`, 
-				`_by`, 
-				`_on`, 
-				`_from` 
-				) VALUES (
-				" . 0 . ",
-				'" . addslashes($userName) . "',
-				'" . addslashes($appEmail) . "',
-				'" . addslashes($street) . "',	
-				'" . addslashes($city) . "',	
-				'" . addslashes($postcode) . "',	
-				'" . addslashes($state) . "',	
-				'" . addslashes($patient) . "',
-				'" . addslashes($phone) . "',
-				'" . addslashes($toAddress) . "',
-				'" . addslashes($pickup) . "',
-				'" . addslashes($arrival) . "',				
-				" . $origFac . ",					
-				" . $recFac . ",	
-				'" . addslashes($scope) . "',
-				'" . addslashes($description) . "',					
-				'" . addslashes($comments) . "',		
-				'" . $lat . "',		
-				'" . $lng . "',				
-				'" . $request_date . "',
-				'Open',
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				" . $_SESSION['user_id'] . ",
-				" . $_SESSION['user_id'] . ",				
-				'" . $now . "',
-				'" . $where . "')";
-	$result	= mysql_query($query) or do_error($query,'mysql_query() failed', mysql_error(), basename( __FILE__), __LINE__);
+	$userName = strip_tags(trim($_GET['frm_username']));
+	$comments = strip_tags(trim($_GET['frm_comments']));
+	$phone = strip_tags(trim($_GET['frm_phone']));
+	$toAddress = strip_tags(trim(urldecode($_GET['frm_toaddress'])));
+	$pickup = strip_tags(trim($_GET['frm_pickup']));
+	$arrival = strip_tags(trim($_GET['frm_arrival']));
+	$patient = strip_tags(trim($_GET['frm_patient']));
+	$origFac = ($_GET['frm_orig_fac'] != "") ? intval($_GET['frm_orig_fac']) : 0;
+	$recFac = ($_GET['frm_rec_fac'] != "") ? intval($_GET['frm_rec_fac']) : 0;	
+	$_user_id = intval($_SESSION['user_id']);
+	$_status = 'Open';
+	$stmt = mysql_prepare("INSERT INTO `" . $GLOBALS['mysql_prefix'] . "requests` (
+				`org`, `contact`, `email`, `street`, `city`, `postcode`, `state`,
+				`the_name`, `phone`, `to_address`, `pickup`, `arrival`,
+				`orig_facility`, `rec_facility`, `scope`, `description`, `comments`,
+				`lat`, `lng`, `request_date`, `status`,
+				`requester`, `_by`, `_on`, `_from`
+				) VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	if(!$stmt) { do_error('','mysql_prepare() failed', mysql_error(), basename( __FILE__), __LINE__); }
+	mysql_stmt_bind_param($stmt, "ssssssssssssiisssssssiiss",
+		$userName, $the_email, $street, $city, $postcode, $state,
+		$patient, $phone, $toAddress, $pickup, $arrival,
+		$origFac, $recFac, $scope, $description, $comments,
+		$lat, $lng, $request_date, $_status,
+		$_user_id, $_user_id, $now, $where);
+	$result = mysql_stmt_execute($stmt);
+	mysql_stmt_close($stmt);
+	if(!$result) { do_error('','mysql_query() failed', mysql_error(), basename( __FILE__), __LINE__); }
 	if($result) {
 		do_log($GLOBALS['LOG_NEW_REQUEST'], $_SESSION['user_id']);
 		$to_str1 = "";

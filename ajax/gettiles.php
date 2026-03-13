@@ -7,9 +7,9 @@ if(empty($_GET)) {
 	}
 require_once('../incs/functions.inc.php');
 $completed = array();
-$dir = $_GET['dir'];
-$subdir = $_GET['subdir'];
-$file = $_GET['file'];
+$dir = preg_replace('/[^0-9]/', '', $_GET['dir']);
+$subdir = preg_replace('/[^0-9]/', '', $_GET['subdir']);
+$file = preg_replace('/[^0-9a-zA-Z._\-]/', '', $_GET['file']);
 
 do_login(basename(__FILE__));
 error_reporting(E_ALL);	

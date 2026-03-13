@@ -451,9 +451,40 @@
       }
 
       public static function mysql_stmt_error($stmt){
-          
+
           return mysqli_stmt_error($stmt);
-          
+
+      }
+
+      /**
+       * Convenience method: prepare, bind, execute, and return result in one call.
+       * Usage: mysql_prepared_query("SELECT * FROM t WHERE id = ? AND name = ?", "is", $id, $name)
+       * Returns: mysqli_result on success, FALSE on failure.
+       */
+      public static function mysql_prepared_query($query, $types = "", ...$params){
+
+          $link = self::$currObj;
+          $stmt = mysqli_prepare($link, $query);
+          if(!$stmt){
+              return false;
+          }
+          if($types !== "" && count($params) > 0){
+              mysqli_stmt_bind_param($stmt, $types, ...$params);
+          }
+          if(!mysqli_stmt_execute($stmt)){
+              mysqli_stmt_close($stmt);
+              return false;
+          }
+          $result = mysqli_stmt_get_result($stmt);
+          if($result === false){
+              // For INSERT/UPDATE/DELETE that don't return a result set
+              $affected = mysqli_stmt_affected_rows($stmt);
+              mysqli_stmt_close($stmt);
+              return ($affected >= 0) ? true : false;
+          }
+          mysqli_stmt_close($stmt);
+          return $result;
+
       }
     
       public static function mysql_query($query,$link=null){

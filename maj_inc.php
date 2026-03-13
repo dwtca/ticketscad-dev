@@ -1399,12 +1399,12 @@ require_once('./incs/all_forms_js_variables.inc.php');
 	$now = mysql_format_date(time() - (get_variable('delta_mins')*60));
 	$caption = "";
 	if ($_postfrm_remove == 'yes') {					//delete Responder - checkbox - 8/12/09
-		$query = "DELETE FROM $GLOBALS[mysql_prefix]major_incidents WHERE `id`=" . $_POST['frm_id'];
+		$query = "DELETE FROM `" . $GLOBALS['mysql_prefix'] . "major_incidents` WHERE `id`=" . intval($_POST['frm_id']);
 		$result = mysql_query($query) or do_error($query, 'mysql_query() failed', mysql_error(), __FILE__, __LINE__);
 		$caption = "<B>Unit <I>" . stripslashes_deep($_POST['frm_name']) . "</I> has been deleted from database.</B><BR /><BR />";
 		} else {
 		if ($_getgoedit == 'true') {
-			$query = "SELECT * FROM `$GLOBALS[mysql_prefix]major_incidents` WHERE `id` = " . $_POST['frm_id'];
+			$query = "SELECT * FROM `" . $GLOBALS['mysql_prefix'] . "major_incidents` WHERE `id` = " . intval($_POST['frm_id']);
 			$result = mysql_query($query) or do_error($query, 'mysql query failed', mysql_error(),basename( __FILE__), __LINE__);
 			$row = stripslashes_deep(mysql_fetch_assoc($result));
 			$current_status = $row['mi_status'];
